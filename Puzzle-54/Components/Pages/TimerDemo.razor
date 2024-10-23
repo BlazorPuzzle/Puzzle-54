@@ -1,0 +1,77 @@
+﻿@page "/timerdemo"
+@inject IJSRuntime jsRuntime
+
+<script>
+    let timer = 0;  // the current time elapsed since last user activity (in milliseconds)
+    const timerInterval = 1000; // the timer ticks at this interval (in milliseconds)
+    const maxTime = 5000; // the maximum time before the idle warning is displayed (in milliseconds)
+
+    window.RegisterTimer = (dotNetObject) => {
+        console.log("GOT HERE");
+        document.addEventListener('mousemove', resetTimer);
+        document.addEventListener('keypress', resetTimer);
+        document.addEventListener('click', resetTimer);
+        document.addEventListener('scroll', resetTimer);
+
+        var iFrame = document.getElementById('myIFrame');
+        if (iFrame) {
+            console.log("REGISTERING");
+            iFrame.addEventListener('mousemove', resetTimer);
+            iFrame.addEventListener('keypress', resetTimer);
+            iFrame.addEventListener('click', resetTimer);
+            iFrame.addEventListener('scroll', resetTimer);
+            setTimerInterval(dotNetObject);
+        }
+        else
+        {
+            console.log("NO IFRAME");
+        }
+    }
+
+    function setTimerInterval(dotNetObject) {
+        setInterval(() => {
+            timer += timerInterval;
+            if (timer > maxTime) {
+                idleWarning(dotNetObject);
+            }
+        }, timerInterval);
+    }
+
+    function resetTimer() {
+        console.log("RESETTING TIMER");
+        timer = 0;
+    }
+
+    function idleWarning(dotNetObject) {
+        dotNetObject.invokeMethodAsync('UpdateIdleWarningMessage');
+    }
+</script>
+
+<p style="color:red;">@Message</p>
+
+<ul>
+    <li>Move around in this page to reset the timer.  It will expire after 5 seconds and display a warning above.</li>
+    <li>Moving around in the iframe should reset the timer, too.</li>
+</ul>
+
+<iframe id="myIFrame" src="Weather"
+        style="width: 600px; height: 500px;">
+</iframe>
+
+@code {
+    string Message = "Warning: Waiting for time out";
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await jsRuntime.InvokeVoidAsync("RegisterTimer", DotNetObjectReference.Create(this));
+        }
+    }
+
+    [JSInvokable]
+    public async Task UpdateIdleWarningMessage()
+    {
+        Message = "Warning: Time Out";
+        await InvokeAsync(StateHasChanged);
+    }
+}
