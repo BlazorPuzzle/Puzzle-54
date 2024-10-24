@@ -2,7 +2,7 @@
 
 ## Time for Timer!
 
-YouTube Video: https://youtu.be/
+YouTube Video: https://youtu.be/B6PmGo8kzRM
 
 Blazor Puzzle Home Page: https://blazorpuzzle.com
 
@@ -10,15 +10,13 @@ Blazor Puzzle Home Page: https://blazorpuzzle.com
 
 This is an interesting demo where we are tracking user activity.
 
-Navigate to the TimerDemo page.
+Navigate to the Timer Demo page, which shows some content and also the Weather page inside an `<iframe>` element.
 
 If you don't move your mouse or press a key for 5 seconds, you will see a warning message.
 
-You can watch the console messages in the console window.
-
-However, if you move your mouse inside an iframe, the timer never resets.
+However, if you move your mouse inside the `<iframe>`, the timer never resets.
 
 Once the time is up, you will have to refresh the page to test it again.
 
-How can we make the events happen inside the iframe?
+How can we capture the events inside the `<iframe>`?
 
